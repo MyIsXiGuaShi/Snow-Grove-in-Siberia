@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.renting.dao.Sys_userMapper">
+	<select id="login" parameterType="Sys_user" resultType="int">
+		SELECT `uid` FROM `sys_user`
+			WHERE `uName`=#{uName} AND `uPassWord`=#{uPassWord}
+	</select>
+	<insert id="register" parameterType="Sys_user">
+		INSERT INTO `sys_user`(`uName`,`uPassWord`,`realName`,`uPhone`) VALUES(#{uName},#{uPassWord},#{realName},#{uPhone})
+	</insert>
+	<select id="nameVerify" resultType="int" parameterType="string">
+		SELECT COUNT(1) FROM `sys_user` WHERE `uName`=#{uName}
+	</select>
+</mapper>

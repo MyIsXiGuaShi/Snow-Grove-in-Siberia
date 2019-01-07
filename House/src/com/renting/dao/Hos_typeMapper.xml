@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.renting.dao.Hos_typeMapper">
+	<cache eviction="LRU" flushInterval="60000" size="1024" readOnly="true"/>
+	<select id="seleTypeAll" resultType="Hos_type" useCache="true">
+		SELECT * FROM `hos_type`
+	</select>
+</mapper>

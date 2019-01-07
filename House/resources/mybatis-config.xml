@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "mybatis-3-config.dtd" >
+<configuration>
+	<settings>
+	  <setting name="logImpl" value="LOG4J"/>
+	  <setting name="autoMappingBehavior" value="FULL"/>
+	  <setting name="cacheEnabled" value="true"/>
+	  <setting name="mapUnderscoreToCamelCase" value="false"/>
+	  <setting name="lazyLoadingEnabled" value="true"/>
+	</settings>
+	
+	<typeAliases>
+		<package name="com.renting.vo"/>
+	</typeAliases>
+	
+	<plugins>
+		<plugin interceptor="com.github.pagehelper.PageHelper">
+			<!-- pageSize=0相当于没有执行分页查询，但是返回结果仍然是Page类型 -->
+	  		<property name="pageSizeZero" value="true"/>
+			<!-- 启用合理化时，如果pageNum<1或pageNum>pages会返回首页或尾页 -->
+		  	<property name="reasonable" value="true"/>
+		  	<!-- 设置为true时，使用RowBounds分页会进行count查询 -->
+		  	<property name="rowBoundsWithCount" value="true"/>
+		  	<property name="dialect" value="mysql"/>
+		</plugin>
+	</plugins>
+</configuration>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.renting.dao.Hos_houseMapper">
+	<cache eviction="LRU" flushInterval="60000" size="1024" readOnly="true"/>
+	<resultMap type="Hos_house" id="houseMap">
+		<id property="hMid" column="hMid"/>
+		<association property="type" javaType="Hos_type" column="hTid" select="HosType"/>
+		<association property="user" javaType="Sys_user" column="uid" select="User"/>
+		<association property="street" javaType="Hos_street" column="sid" select="Street"/>
+	</resultMap>
+	
+	<select id="seleUnite" resultMap="houseMap" parameterType="map"  useCache="true">
+		SELECT * FROM `hos_house` <include refid="condition"/>
+	</select>
+	
+	<sql id="condition">
+		<where>
+			<if test="uid !=0 and uid !=null">
+				AND `uid`=#{uid}
+			</if>
+			<!-- 标题 -->
+			<if test="topic !=null and topic != ''">
+				AND `topic` LIKE CONCAT('%',#{topic},'%')
+			</if>
+			<!-- 面积 -->
+			<if test="(areaB != 0 and areaB != null) and (areaA != null and areaA != 0)">
+				AND (<![CDATA[`size`>=#{areaA}]]> AND `size`&lt;#{areaB})
+			</if>
+			<!-- 价格 -->
+			<!--  -->
+			<if test="priceB != 0 and priceB !=null">
+				AND (<![CDATA[`price` >=#{priceA}]]> AND `price`&lt; #{priceB})
+			</if>
+			<!-- 房屋类型 -->
+			<if test="type != 0 and type !=null">
+				AND `hTid` = #{type}
+			</if>
+			<!-- 街道 -->
+			<if test="street != 0 and street != null">
+				AND `sid` = #{street}
+			</if>
+			<if test="district != 0 and district != null">
+				AND `sid` IN (SELECT `sid` FROM `hos_street` WHERE `sDid`=#{district})
+			</if>
+		</where>
+	</sql>
+	<select id="HosType" resultType="Hos_type" useCache="true">
+		select * from `hos_type` where `hid` = #{hTid}
+	</select>
+	<select id="User" resultType="Sys_user" useCache="true">
+		SELECT * FROM `sys_user` WHERE `uid` = #{uid}
+	</select>
+	<resultMap type="Hos_street" id="SteetMap">
+		<id column="sid" property="sid"/>
+		<association property="district" javaType="Hos_district" column="sDid" select="District"/>
+	</resultMap>
+	<select id="Street" resultMap="SteetMap" useCache="true">
+		SELECT * FROM `hos_street` WHERE `sid` =#{sid}
+	</select>
+	
+	<select id="District" resultType="Hos_district" useCache="true">
+		SELECT * FROM `hos_district` WHERE `did` = #{sDid}
+	</select>
+	
+	<select id="seleHouseId" resultMap="houseMap" useCache="true" flushCache="true">
+		SELECT * FROM `hos_house` WHERE `hMid` = #{hMid}
+	</select>
+	
+	<insert id="addHouse" parameterType="Hos_house" flushCache="true">
+		INSERT INTO `hos_house`(`uid`,`sid`,`hTid`,`size`,`price`,`topic`,`contents`,`hTime`)
+			VALUES(#{uid},#{sid},#{hTid},#{size},#{price},#{topic},#{contents},#{hTime})
+	</insert>
+	
+	<delete id="deleHouse" flushCache="true">
+		DELETE FROM `hos_house` WHERE `hMid`=#{hMid}
+	</delete>
+	
+	<update id="updaHouse" parameterType="Hos_house">
+		UPDATE `hos_house` <include refid="update"/>
+	</update>
+	<sql id="update">
+		<set>
+			<!-- 标题 -->
+			<if test="topic !=null and topic != ''">
+				`topic`=#{topic},
+			</if>
+			<!-- 面积 -->
+			<if test="size != 0 and size != null">
+				`size`=#{size},
+			</if>
+			<!-- 价格 -->
+			<!--  -->
+			<if test="price != 0 and price !=null">
+				`price`=#{price},
+			</if>
+			<!-- 房屋类型 -->
+			<if test="hTid != 0 and hTid !=null">
+				`hTid` = #{hTid},
+			</if>
+			<!-- 街道 -->
+			<if test="sid != 0 and sid != null">
+				`sid` = #{sid},
+			</if>
+			<if test="contents != '' and contents != null">
+				`contents`=#{contents},
+			</if>
+			<if test="hTime != '' and hTime != null">
+				`hTime`=#{hTime},
+			</if>
+		</set>
+		WHERE `hMid`=#{hMid}
+	</sql>
+</mapper>
